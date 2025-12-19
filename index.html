@@ -138,6 +138,13 @@
     </div>
 
     <div id="admin-panel" class="hidden">
+        <a href="https://mrquan9x-2025.github.io/quanlythiv2/" style="text-decoration: none;">
+            <button class="btn btn-outline" style="margin-bottom: 20px; border-color: #28a745; color: #28a745; font-weight: bold;">
+                📊 THỐNG KÊ KẾT QUẢ THI
+            </button>
+        </a>
+        <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 20px;">
+
         <h2>Tạo Đề Thi Mới</h2>
         <input type="text" id="new-exam-code" placeholder="Mã đề (VD: TEST01)">
         <input type="text" id="new-exam-name" placeholder="Tên đề thi">
@@ -212,6 +219,17 @@
     });
     // -----------------------------------
 
+
+    // --- HÀM CHUẨN HÓA HỌ TÊN TIẾNG VIỆT ---
+    function chuanHoaTen(str) {
+        // 1. Xóa khoảng trắng thừa ở đầu, cuối và giữa các từ
+        str = str.trim().replace(/\s+/g, ' ');
+        // 2. Chuyển tất cả về chữ thường, sau đó viết hoa chữ cái đầu mỗi từ
+        return str.toLowerCase().replace(/(^|\s)\S/g, function(l) { 
+            return l.toUpperCase(); 
+        });
+    }
+
     // --- THAY LINK API CỦA THẦY VÀO ĐÂY ---
     const API_URL = "https://script.google.com/macros/s/AKfycbxWMUa0nlWXoNqe1Jp2MSD1_uBgXSbLdALSuoZoWWJzXR-gnGS1mBDVD-FZyT2UEnFxlQ/exec"; 
     // ---------------------------------------
@@ -231,10 +249,34 @@
     }
 
     async function vaoThi() {
-        studentName = document.getElementById('hs-name').value.trim();
-        examCode = document.getElementById('exam-code').value.trim();
-        if(!studentName || !examCode) return alert("Vui lòng nhập đủ thông tin!");
+          // --- CẬP NHẬT: XỬ LÝ HỌ TÊN THÔNG MINH ---
+        const nameInput = document.getElementById('hs-name');
+        let rawName = nameInput.value;
+        
+        // Bước 1: Chuẩn hóa (Tự động viết hoa chữ cái đầu)
+        let cleanName = chuanHoaTen(rawName);
+        
+        // Bước 2: Kiểm tra độ dài (Phải có ít nhất 2 từ)
+        if (!cleanName || cleanName.split(' ').length < 2) {
+            alert("Vui lòng nhập đầy đủ Họ và Tên (Ví dụ: Nguyễn Văn An)");
+            nameInput.focus();
+            return;
+        }
 
+        // Bước 3: Gán lại tên đã chuẩn hóa vào ô input để học sinh nhìn thấy
+        nameInput.value = cleanName;
+        studentName = cleanName; // Lưu vào biến toàn cục
+        // ------------------------------------------
+
+        const code = document.getElementById('exam-code').value.trim();
+        examCode = code; // Lưu mã đề
+
+        if (!studentName || !examCode) {
+            alert("Vui lòng nhập đủ Họ Tên và Mã đề!");
+            return;
+        }
+
+       
         showLoader(true);
         try {
             const res = await fetch(`${API_URL}?action=get_exam&maDe=${examCode}&t=${Date.now()}`).then(r => r.json());
