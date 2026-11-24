@@ -890,12 +890,12 @@
             document.getElementById('result-interface').style.display = 'block';
 			// --- ĐOẠN CODE MỚI THÊM: XỬ LÝ NÚT SỬA SAI ---
             window.ketQuaChiTiet = res.chiTiet; // Lưu kết quả lại để dùng
-            // Nếu điểm < 10 (tức là có câu sai) thì hiện nút Sửa sai
-            if (res.diem < (currentExamConfig.p1_num * currentExamConfig.p1_score + currentExamConfig.p2_num * 1 + currentExamConfig.p3_num * currentExamConfig.p3_score)) { 
-                 document.getElementById('btn-fix-mistakes').style.display = 'block';
-            } else {
-                 document.getElementById('btn-fix-mistakes').style.display = 'none';
-            }
+            // Kiểm tra trực tiếp: còn ít nhất 1 câu sai thì hiện nút Sửa sai
+            // (Câu Đúng/Sai chỉ cần sai 1 ý cũng tính là câu sai)
+            const coCauSai = res.chiTiet.some(item =>
+                Array.isArray(item.ketQua) ? item.ketQua.includes(false) : item.diem == 0
+            );
+            document.getElementById('btn-fix-mistakes').style.display = coCauSai ? 'block' : 'none';
             // ---------------------------------------------
 			
             document.getElementById('score-display').innerText = res.diem.toFixed(2);
