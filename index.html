@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-<!-- CHÀO NGƯỜI TÒ MÒ! Bạn đang tìm gì ở đây vậy? -->
-<!-- Nếu bạn thấy mã nguồn này thú vị hoặc có ý tưởng nào để nâng tầm trải nghiệm học tập tại đây, hãy liên hệ với tôi! -->
-<!-- Nếu bạn đang định tìm đáp án bài tập hoặc những bí mật ẩn giấu trong này... thì lời khuyên là hãy quay lại giao diện chính và khám phá chúng theo cách bình thường nhé. Tự mình vượt qua thử thách và tìm ra những điều thú vị khi học sẽ mang lại cảm giác "đã" hơn nhiều so với việc đọc code đấy! -->
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -391,7 +388,7 @@
     </div>
 
     <div id="admin-panel" class="hidden">
-        <a href="https://docs.google.com/spreadsheets/u/0/?tgif=c" style="text-decoration: none;">
+        <a href="https://mrquan9x-2025.github.io/quanlythiv2/" style="text-decoration: none;">
             <button class="btn btn-outline" style="margin-bottom: 20px; border-color: #28a745; color: #28a745; font-weight: bold;">
                 📊 THỐNG KÊ KẾT QUẢ THI
             </button>
@@ -405,7 +402,7 @@
         <div class="config-group">
             <div class="section-header" style="margin-top:0">Cấu hình Phần 1 (Trắc nghiệm)</div>
             <div class="config-row">
-                <div><label class="config-label">Số câu:</label><input type="number" id="cfg-p1-num" value="12"></div>
+                <div><label class="config-label">Số câu:</label><input type="number" id="cfg-p1-num" value="18"></div>
                 <div><label class="config-label">Điểm/câu:</label><input type="number" id="cfg-p1-score" value="0.25" step="0.01"></div>
             </div>
         </div>
@@ -427,13 +424,13 @@
             <div class="section-header">Cấu hình Phần 3 (Trả lời ngắn)</div>
             <div class="config-row">
                 <div><label class="config-label">Số câu:</label><input type="number" id="cfg-p3-num" value="6"></div>
-                <div><label class="config-label">Điểm/câu:</label><input type="number" id="cfg-p3-score" value="0.5" step="0.01"></div>
+                <div><label class="config-label">Điểm/câu:</label><input type="number" id="cfg-p3-score" value="0.25" step="0.01"></div>
             </div>
         </div>
 
         <div style="background: #e2e6ea; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 0.9em;">
             <strong>Hướng dẫn:<br> </strong> 
-             a) Tổng điểm các câu trong đề thi không bắt buộc phải bằng 10. Tuy nhiên, để sử dụng tốt các chức năng "Lời nhắc" dành cho học sinh và "Xem phổ điểm" thì nên để điểm tối đa bằng 10 (hoặc xấp xỉ 10).<br> 
+             a) Điểm của học sinh sẽ tự động được quy về thang điểm 10, không phụ thuộc tổng điểm cài đặt của đề.<br> 
              b) Dùng dấu chấm (.) để viết số thập phân.<br>
         	 c) Nhập liên tiếp đáp án từ trên xuống dưới (Hết P1 > P2 > P3). Ví dụ:<br>
 				1. A<br>
@@ -449,9 +446,39 @@
 
     <div id="exam-interface" class="hidden">
         <h2 id="exam-title-display"></h2>
-        <div id="questions-container"></div>
-        <button class="btn" onclick="nopBai()">NỘP BÀI</button>
-    </div>
+        
+		<div id="questions-container"></div>
+
+		<!-- GIF HIỆN KHI ĐANG CHẤM BÀI -->
+	<div style="position:relative;">
+
+		<div id="grading-gif"
+			 style="
+				display:none;
+				position:absolute;
+				left:50%;
+				bottom:70px;
+				transform:translateX(-50%);
+				z-index:10;
+				text-align:center;
+				pointer-events:none;
+			 ">
+
+			<img src="https://cdn.pixabay.com/animation/2026/07/25/06/54/06-54-15-793_512.gif"
+				 alt=""
+				 style="
+					width:140px;
+					max-width:45vw;
+					height:auto;
+					border-radius:10px;
+					display:block;
+				">
+		</div>
+
+		<button class="btn" onclick="nopBai()">NỘP BÀI</button>
+
+		</div>
+	</div>
 
     <div id="result-interface" class="hidden">
         <h2>KẾT QUẢ: <span id="score-display" style="color:red; font-size: 2em"></span></h2>
@@ -481,12 +508,45 @@
 		"Giống như cơ bắp, bộ não cũng cần được tập thể dục. Nếu học Toán là những bài tập chuyên sâu thì <span style=\"color: #1DA1F2; font-weight: bold;\">#SDK</span> là bài tập khởi động nhẹ nhàng thú vị"
     ];
 
-    // Tự động chọn 1 câu và hiển thị khi trang web tải xong
-    document.addEventListener("DOMContentLoaded", function() {
-        const randomSlogan = listSlogans[Math.floor(Math.random() * listSlogans.length)];
-        const sloganElement = document.getElementById('slogan-display');
-        if(sloganElement) sloganElement.innerHTML = randomSlogan;
-    });
+    // Khi trang web tải xong
+	document.addEventListener("DOMContentLoaded", function() {
+
+		// 1. Hiển thị slogan ngẫu nhiên
+		const randomSlogan =
+			listSlogans[Math.floor(Math.random() * listSlogans.length)];
+
+		const sloganElement =
+			document.getElementById('slogan-display');
+
+		if (sloganElement) {
+			sloganElement.innerHTML = randomSlogan;
+		}
+
+
+		// 2. Tự động điền họ tên đã lưu trên thiết bị
+		const savedName =
+			localStorage.getItem("studentName");
+
+		if (savedName) {
+
+			const nameInput =
+				document.getElementById("hs-name");
+
+			if (nameInput) {
+				nameInput.value = savedName;
+			}
+
+
+			// Nếu đã nhớ tên thì đưa con trỏ xuống ô nhập mã đề
+			const examInput =
+				document.getElementById("exam-code");
+
+			if (examInput) {
+				examInput.focus();
+			}
+		}
+
+	});
     // -----------------------------------
 
     // --- HÀM CHUẨN HÓA HỌ TÊN TIẾNG VIỆT ---
@@ -507,9 +567,103 @@
     let currentExamQuestions = [];
     let studentName = "";
     let examCode = "";
+	// Mã duy nhất cho một lượt nộp bài
+	let currentSubmissionId = null;
 
     function showLoader(show) { document.getElementById('loader').style.display = show ? 'block' : 'none'; }
-    function hideAll() {
+    
+	// Chờ một khoảng thời gian
+	function delay(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+
+	// Tạo mã duy nhất cho một lượt nộp bài
+	function createSubmissionId() {
+
+		// Trình duyệt hiện đại
+		if (
+			window.crypto &&
+			typeof crypto.randomUUID === 'function'
+		) {
+			return crypto.randomUUID();
+		}
+
+		// Dự phòng cho trình duyệt cũ
+		return (
+			Date.now().toString(36) +
+			"-" +
+			Math.random().toString(36).substring(2) +
+			"-" +
+			Math.random().toString(36).substring(2)
+		);
+	}
+
+
+	// Gửi bài lên Apps Script MỘT LẦN
+	async function guiBaiMotLan(baiLam) {
+
+		const formData = new FormData();
+
+		formData.append('action', 'submit_exam');
+		formData.append('maDe', examCode);
+		formData.append('tenHS', studentName);
+		formData.append(
+			'baiLam',
+			JSON.stringify(baiLam)
+		);
+
+		// Quan trọng: gửi cùng SubmissionID
+		formData.append(
+			'submissionId',
+			currentSubmissionId
+		);
+
+
+		const response = await fetch(API_URL, {
+			method: 'POST',
+			body: formData
+		});
+
+
+		// Đọc dạng text trước để dễ phát hiện lỗi JSON
+		const rawText = await response.text();
+
+
+		if (!response.ok) {
+
+			throw new Error(
+				"HTTP " +
+				response.status +
+				": " +
+				rawText.substring(0, 200)
+			);
+		}
+
+
+		let data;
+
+		try {
+
+			data = JSON.parse(rawText);
+
+		} catch (jsonError) {
+
+			console.error(
+				"Server trả về dữ liệu không phải JSON:",
+				rawText
+			);
+
+			throw new Error(
+				"Phản hồi từ máy chủ không phải JSON hợp lệ."
+			);
+		}
+
+
+		return data;
+	}
+	
+	function hideAll() {
         document.getElementById('main-screen').style.display = 'none';
         document.getElementById('login-admin').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'none';
@@ -534,9 +688,17 @@
         }
         
         nameInput.value = cleanName;
-        studentName = cleanName;
+		studentName = cleanName;
 
-        if (!examCode || !studentName) {
+
+		// TỰ ĐỘNG LƯU HỌ TÊN TRÊN THIẾT BỊ NÀY
+		localStorage.setItem(
+			"studentName",
+			cleanName
+		);
+
+
+		if (!examCode || !studentName) {
             alert("Vui lòng nhập đầy đủ Họ tên và Mã đề!");
             return;
         }
@@ -569,9 +731,16 @@
             document.getElementById('exam-interface').style.display = 'block';
             document.getElementById('exam-title-display').innerText = res.data.tenDe;
             
-            currentExamConfig = res.data.config;
-            currentExamQuestions = res.data.cauHoi;
-            renderQuestions(res.data.cauHoi, res.data.config);
+            // Mỗi lần vào một đề mới -> bắt đầu một lượt thi mới
+			currentSubmissionId = null;
+
+			currentExamConfig = res.data.config;
+			currentExamQuestions = res.data.cauHoi;
+
+			renderQuestions(
+				res.data.cauHoi,
+				res.data.config
+			);
 
         } catch(e) { 
             console.error(e); 
@@ -632,6 +801,8 @@
         // Đổi giao diện nút -> Đang loading
         btnSubmit.disabled = true;
         btnSubmit.innerHTML = '<div class="btn-loader"></div> Đang chấm điểm...';
+		// Hiện GIF khi bắt đầu chấm
+		document.getElementById('grading-gif').style.display = 'block';
 
 	// 2. Thu thập dữ liệu bài làm (Giữ nguyên logic cũ)
         let baiLam = [];
@@ -651,27 +822,70 @@
                 baiLam.push(val);
             }
         });
-        // 3. Gửi dữ liệu đi
-        showLoader(true);
-        const formData = new FormData();
-        formData.append('action', 'submit_exam');
-        formData.append('maDe', examCode);
-        formData.append('tenHS', studentName);
-        formData.append('baiLam', JSON.stringify(baiLam));
+        
+		// 3. GỬI DỮ LIỆU
+		showLoader(true);
 
-        try {
-            const res = await fetch(API_URL, { method: 'POST', body: formData }).then(r => r.json());
-            showLoader(false);
+		// Chỉ tạo SubmissionID ở lần nộp đầu tiên
+		// Nếu retry hoặc học sinh bấm lại, KHÔNG tạo ID mới
+		if (!currentSubmissionId) {
+			currentSubmissionId = createSubmissionId();
+		}
+
+
+		let res;
+
+		try {
+
+			try {
+
+				// ===== LẦN GỬI THỨ NHẤT =====
+				res = await guiBaiMotLan(baiLam);
+
+			} catch (firstError) {
+
+				console.warn(
+					"Lần gửi thứ nhất không nhận được phản hồi:",
+					firstError
+				);
+
+
+				// Thông báo ngay trên nút
+				btnSubmit.innerHTML =
+					'<div class="btn-loader"></div> ' +
+					'Chưa nhận được phản hồi - đang thử lại...';
+
+
+				// Chờ đúng 3 giây
+				await delay(1000);
+
+
+				btnSubmit.innerHTML =
+					'<div class="btn-loader"></div> ' +
+					'Đang thử lại...';
+
+
+				// ===== LẦN GỬI THỨ HAI =====
+				// Vẫn dùng currentSubmissionId CŨ
+				res = await guiBaiMotLan(baiLam);
+			}
+
+
+			showLoader(false);
+		
             // Nếu lỗi thì mở lại nút để nộp lại
             if(res.status === 'error') { 
-                alert(res.msg); 
+                document.getElementById('grading-gif').style.display = 'none';
+				alert(res.msg); 
                 btnSubmit.disabled = false;
                 btnSubmit.innerHTML = originalText;
                 return; 
             }
 
-// ... (Phần trên giữ nguyên) ...
+			// ... (Phần trên giữ nguyên) ...
             
+			// Đã nhận được kết quả -> ẩn GIF
+			document.getElementById('grading-gif').style.display = 'none';
             hideAll();
             document.getElementById('result-interface').style.display = 'block';
 			// --- ĐOẠN CODE MỚI THÊM: XỬ LÝ NÚT SỬA SAI ---
@@ -942,7 +1156,10 @@
 			window.scrollTo(0, 0);
 
         } catch(e) { 
-            alert("Lỗi nộp bài! Vui lòng kiểm tra mạng."); 
+            showLoader(false);
+			// Ẩn GIF
+			document.getElementById('grading-gif').style.display = 'none';
+			alert("Lỗi nộp bài! Kiểm tra mạng và ấn nộp lại nhé."); 
             console.error(e);
             // Mở lại nút nếu lỗi mạng
             btnSubmit.disabled = false;
@@ -1025,19 +1242,65 @@
     btn.disabled = true;
     btn.innerHTML = '<div class="btn-loader"></div> Đang lưu...';
 
-    try {
-        const response = await fetch(API_URL, { method: 'POST', body: formData });
-        const result = await response.json(); // Giả sử API trả về JSON
+    
+	try {
 
-        if(result.status === 'success' || response.ok) {
-            alert("Lưu thành công! Bạn có thể tắt trang hoặc tạo đề khác.!");
-        } else {
-            alert("Có lỗi xảy ra: " + (result.msg || "Không xác định"));
-        }
-    } catch(e) {
-        console.error(e);
-        alert("Lỗi kết nối mạng hoặc máy chủ!");
-    } finally {
+		const response = await fetch(API_URL, {
+			method: 'POST',
+			body: formData
+		});
+
+
+		const rawText = await response.text();
+
+		let result;
+
+		try {
+
+			result = JSON.parse(rawText);
+
+		} catch (jsonError) {
+
+			console.error(
+				"Phản hồi lưu đề không phải JSON:",
+				rawText
+			);
+
+			throw new Error(
+				"Máy chủ trả về dữ liệu không hợp lệ."
+			);
+		}
+
+
+		// Chỉ báo thành công khi BACKEND thật sự trả status = ok
+		if (result.status === 'ok') {
+
+			alert(
+				result.msg ||
+				"Lưu đề thi thành công! Có thể đóng trang hoặc tạo đề khác."
+			);
+
+		} else {
+
+			alert(
+				"Có lỗi xảy ra: " +
+				(result.msg || "Không xác định")
+			);
+		}
+
+	} catch(e) {
+
+		console.error(
+			"Lỗi lưu đề:",
+			e
+		);
+
+		alert(
+			"Lỗi kết nối mạng hoặc máy chủ!"
+		);
+	}
+	
+	finally {
         // 4. TRẢ LẠI NÚT TRẠNG THÁI BAN ĐẦU (Dù thành công hay thất bại)
         btn.disabled = false;
         btn.innerHTML = originalText;
